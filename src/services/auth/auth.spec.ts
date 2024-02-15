@@ -39,4 +39,20 @@ describe('Authenticate use case', () => {
         }).rejects.toBeInstanceOf(InvalidCredentialsError)
     })
 
+    it('Should not be able to authenticate with wrong password', async () => {
+
+        await usersRepository.create({
+            name: 'Vitest Vite',
+            email: 'vitest@vite.com',
+            password_hash: await hash('123456', 6)
+        })
+
+        await expect(async () => {
+            await service.authUser({
+                email: 'vitest@vite.com',
+                password: '123123'
+            })
+        }).rejects.toBeInstanceOf(InvalidCredentialsError)
+    })
+
 })
