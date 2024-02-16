@@ -1,9 +1,9 @@
 import { PrismaUsersRepository } from "../../repositories/PrismaUsersRepository"
-import { RegisterService } from "../../services/register/registerService"
+import { UserService } from "../../services/register/UserService"
 
 export function makeRegisterService() {
     const prismaUsersRepository = new PrismaUsersRepository()
-    const registerService = new RegisterService(prismaUsersRepository)
+    const registerService = new UserService(prismaUsersRepository)
 
     return registerService
 }

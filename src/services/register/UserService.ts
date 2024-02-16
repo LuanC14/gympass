@@ -13,7 +13,7 @@ interface RegisterUserResponse {
     user: User
 }
 
-export class RegisterService {
+export class UserService {
 
     constructor(private usersRepository: IUsersRepository) { }
 

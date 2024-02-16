@@ -1,17 +1,17 @@
 import { expect, describe, it, beforeEach } from 'vitest'
-import { RegisterService } from './registerService'
+import { UserService } from './UserService'
 import { compare } from 'bcryptjs'
 import { InMemoryUsersRepository } from '../../repositories/inMemory/InMemoryUsersRepository'
 import { UserAlreadyExistsError } from '../../errors/UserAlreadyExistsError'
 
 let usersRepository: InMemoryUsersRepository
-let service: RegisterService
+let service: UserService
 
 describe('Register use case', () => {
 
     beforeEach(() => {
         usersRepository = new InMemoryUsersRepository()
-        service = new RegisterService(usersRepository)
+        service = new UserService(usersRepository)
     })
 
     it('Should be able to register', async () => {
