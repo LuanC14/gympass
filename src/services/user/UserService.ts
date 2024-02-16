@@ -1,7 +1,8 @@
 import { hash } from 'bcryptjs'
-import { IUsersRepository } from '../../repositories/IUsersRepository'
+import { IUsersRepository } from '../../repositories/interfaces/IUsersRepository'
 import { UserAlreadyExistsError } from '../../errors/UserAlreadyExistsError'
 import { User } from '@prisma/client'
+import { ResourceNotFoundError } from '../../errors/ResourceNotFoundError'
 
 interface RegisterUserRequest {
     name: string,
@@ -10,6 +11,10 @@ interface RegisterUserRequest {
 }
 
 interface RegisterUserResponse {
+    user: User
+}
+
+interface GetUserResponse {
     user: User
 }
 
@@ -32,5 +37,15 @@ export class UserService {
             user: userCreated
         }
     }
+
+    async getUserById(userId: string): Promise<GetUserResponse> {
+        const user = await this.usersRepository.findById(userId)
+
+        if (!user) {
+            throw new ResourceNotFoundError()
+        }
+        return { user }
+    }
+    
 }
 

@@ -1,6 +1,6 @@
-import { prisma } from "../lib/prisma";
-import { Prisma } from "@prisma/client";
-import { IUsersRepository } from "./IUsersRepository";
+import { prisma } from "../../lib/prisma";
+import { Prisma, User } from "@prisma/client";
+import { IUsersRepository } from "../interfaces/IUsersRepository";
 
 export class PrismaUsersRepository implements IUsersRepository {
 
@@ -12,5 +12,9 @@ export class PrismaUsersRepository implements IUsersRepository {
         return await prisma.user.findUnique({
             where: { email }
         })
+    }
+
+    findById(id: string): Promise<User | null> {
+        throw new Error("Method not implemented.");
     }
 }

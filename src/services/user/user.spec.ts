@@ -3,6 +3,7 @@ import { UserService } from './UserService'
 import { compare } from 'bcryptjs'
 import { InMemoryUsersRepository } from '../../repositories/inMemory/InMemoryUsersRepository'
 import { UserAlreadyExistsError } from '../../errors/UserAlreadyExistsError'
+import { ResourceNotFoundError } from '../../errors/ResourceNotFoundError'
 
 let usersRepository: InMemoryUsersRepository
 let service: UserService
@@ -58,4 +59,30 @@ describe('Register use case', () => {
 
 
 
+})
+
+describe('Get user use case', () => {
+    beforeEach(() => {
+        usersRepository = new InMemoryUsersRepository()
+        service = new UserService(usersRepository)
+    })
+
+    it('should be able to get user profile', async () => {
+        const userCreated = await service.registerUser({
+            name: 'Vitest Vite',
+            email: 'vitest@vite.com',
+            password: '123456'
+        })
+
+        const { user } = await service.getUserById(userCreated.user.id)
+
+        expect(user.id).toEqual(expect.any(String))
+
+    })
+
+    it("should not be able to get user profile with wrong id", async () => {
+        expect( async () => {
+            await service.getUserById("falseId")
+        }).rejects.toBeInstanceOf(ResourceNotFoundError)
+    })
 })
