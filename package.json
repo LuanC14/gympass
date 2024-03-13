@@ -7,8 +7,8 @@
     "dev": "tsx watch src/server.ts",
     "build": "tsup src --out-dir build",
     "start": "node build/server.js",
-    "test" : "vitest run",
-    "test:watch" : "vitest"
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "keywords": [],
   "author": "",
@@ -26,6 +26,7 @@
   "dependencies": {
     "@prisma/client": "5.9.1",
     "bcryptjs": "2.4.3",
+    "dayjs": "1.11.10",
     "dotenv": "16.4.2",
     "fastify": "4.26.1",
     "zod": "3.22.4"
