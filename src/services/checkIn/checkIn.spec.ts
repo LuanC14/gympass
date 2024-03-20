@@ -10,7 +10,7 @@ let repository: InMemoryCheckInsRepository
 let gymsRepository: InMemoryGymsRepository
 let service: CheckInService
 
-describe('Check In service', () => {
+describe('CheckInService: Create Check-in use case', () => {
 
     beforeEach(async () => {
         repository = new InMemoryCheckInsRepository()
@@ -104,5 +104,59 @@ describe('Check In service', () => {
                 userLongitude: -42.0615918
             }),
         ).rejects.toBeInstanceOf(MaxDistanceError)
+    })
+})
+
+describe('CheckInService: Fetch Check-in use case', () => {
+    beforeEach(async () => {
+        repository = new InMemoryCheckInsRepository()
+        service = new CheckInService(repository)
+    })
+
+    it('Deverá ser possível obter uma lista de check-ins', async () => {
+
+        await repository.create({
+            gym_id: 'gym-01',
+            user_id: 'user-01'
+        })
+
+        await repository.create({
+            gym_id: 'gym-02',
+            user_id: 'user-01'
+        })
+
+        const { checkIns } = await service.FecthUserCheckIns({
+            userId: 'user-01',
+            page: 1
+        })
+
+        expect(checkIns).toHaveLength(2)
+
+        expect(checkIns).toEqual([
+            expect.objectContaining({gym_id: 'gym-01'}),
+            expect.objectContaining({gym_id: 'gym-02'})
+        ])
+    })
+
+    it('Deverá ser possível obter uma lista paginada de check-ins', async () => {
+
+        for(let i = 1; i <= 22; i++) {
+            await repository.create({
+                gym_id: `gym-${i}`,
+                user_id: 'user-01'
+            })
+        }
+
+        const { checkIns } = await service.FecthUserCheckIns({
+            userId: 'user-01',
+            page: 2
+        })
+
+        expect(checkIns).toHaveLength(2)
+
+        expect(checkIns).toEqual([
+            expect.objectContaining({gym_id: 'gym-21'}),
+            expect.objectContaining({gym_id: 'gym-22'})
+        ])
     })
 })

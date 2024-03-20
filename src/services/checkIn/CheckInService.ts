@@ -17,15 +17,24 @@ interface CheckInRespose {
     checkIn: CheckIn
 }
 
+interface FetchUserCheckInsRequest {
+    userId: string
+    page: number
+}
+
+interface FetchUserCheckInsResponse {
+    checkIns: CheckIn[]
+}
+
 export class CheckInService {
     constructor(
         private checkInsRepository: ICheckInsRepository,
-        private gymsRepository: IGymsRepository,
+        private gymsRepository?: IGymsRepository,
     ) { }
 
     async createCheckIn({ userId, gymId, userLatitude, userLongitude }: CheckInRequest): Promise<CheckInRespose> {
 
-        const gym = await this.gymsRepository.findById(gymId)
+        const gym = await this.gymsRepository!.findById(gymId)
 
         if (!gym) {
             throw new ResourceNotFoundError()
@@ -47,5 +56,13 @@ export class CheckInService {
         const checkIn = await this.checkInsRepository.create({ user_id: userId, gym_id: gymId })
 
         return { checkIn }
+    }
+
+    async FecthUserCheckIns({ userId, page }: FetchUserCheckInsRequest): Promise<FetchUserCheckInsResponse> {
+        const checkIns = await this.checkInsRepository.findManyByUserId(userId, page)
+
+        return {
+            checkIns,
+        }
     }
 }
