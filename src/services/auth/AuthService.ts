@@ -19,10 +19,8 @@ export class AuthService {
     public async authUser({ email, password }: AuthServiceRequest): Promise<AuthServiceResponse> {
         const user = await this.usersRepository.findByEmail(email)
 
-        if (!user) {
-            throw new InvalidCredentialsError()
-        }
-
+        if (user == null) throw new InvalidCredentialsError()
+       
         const doesPasswordMatches = await compare(password, user.password_hash)
 
         if (!doesPasswordMatches) {

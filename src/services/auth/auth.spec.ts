@@ -3,49 +3,46 @@ import { InMemoryUsersRepository } from '../../repositories/inMemory/InMemoryUse
 import { AuthService } from './AuthService'
 import { hash } from 'bcryptjs'
 import { InvalidCredentialsError } from '../../errors/InvalidCredentialsErrors'
+import { randomUUID } from 'crypto'
 
 let usersRepository: InMemoryUsersRepository
 let service: AuthService
 
-describe('Authenticate use case', () => {
+describe('Authenticate use case', async () => {
 
-    beforeEach(() => {
+     beforeEach(async () => {
         usersRepository = new InMemoryUsersRepository()
         service = new AuthService(usersRepository)
-    })
 
-    it('Should be able to authenticate', async () => {
-
-        await usersRepository.create({
+        usersRepository.items.push({
+            id: randomUUID(),
             name: 'Vitest Vite',
             email: 'vitest@vite.com',
-            password_hash: await hash('123456', 6)
+            password_hash: await hash('123456', 6),
+            created_at: new Date()
         })
+    })
+
+    it('deverá ser possível realizar a autenticação', async () => {
 
         const { user } = await service.authUser({
-            email: 'Vitest Vite',
+            email: 'vitest@vite.com',
             password: '123456'
         })
 
         expect(user.id).toEqual(expect.any(String))
     })
 
-    it('Should not be able to authenticate with wrong email', async () => {
+    it('não deverá ser possível se autenticar com o email errado', async () => {
         await expect(async () => {
             await service.authUser({
-                email: 'Vitest Vite',
+                email: 'email@invalido.com',
                 password: '123456'
             })
         }).rejects.toBeInstanceOf(InvalidCredentialsError)
     })
 
-    it('Should not be able to authenticate with wrong password', async () => {
-
-        await usersRepository.create({
-            name: 'Vitest Vite',
-            email: 'vitest@vite.com',
-            password_hash: await hash('123456', 6)
-        })
+    it('não deverá ser possível se autenticar com a senha errada', async () => {
 
         await expect(async () => {
             await service.authUser({
