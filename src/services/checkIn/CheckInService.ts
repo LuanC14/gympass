@@ -1,6 +1,6 @@
 import { CheckIn } from "@prisma/client"
 import { ICheckInsRepository } from "../../repositories/interfaces/ICheckInsRepository"
-import { GymsRepository } from "../../repositories/interfaces/GymsRepository"
+import { IGymsRepository } from "../../repositories/interfaces/IGymsRepository"
 import { ResourceNotFoundError } from "../../errors/ResourceNotFoundError"
 import { getDistanceBetweenCoordinates } from "../../utils/getDistanceBetweenCoordinates"
 
@@ -18,7 +18,7 @@ interface CheckInRespose {
 export class CheckInService {
     constructor(
         private checkInsRepository: ICheckInsRepository,
-        private gymsRepository: GymsRepository,
+        private gymsRepository: IGymsRepository,
     ) { }
 
     async createCheckIn({ userId, gymId, userLatitude, userLongitude }: CheckInRequest): Promise<CheckInRespose> {
