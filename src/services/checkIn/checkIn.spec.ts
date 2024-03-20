@@ -3,6 +3,8 @@ import { CheckInService } from "./CheckInService"
 import { beforeEach, expect, describe, it, vi, afterEach } from "vitest"
 import { InMemoryGymsRepository } from "../../repositories/inMemory/InMemoryGymsRepository"
 import { Decimal } from "@prisma/client/runtime/library"
+import { MaxDistanceError } from "../../errors/MaxDistanceError"
+import { MaxNumberOfCheckInsError } from "../../errors/MaxNumberOfCheckInsError"
 
 let repository: InMemoryCheckInsRepository
 let gymsRepository: InMemoryGymsRepository
@@ -59,7 +61,7 @@ describe('Check In service', () => {
                 userLatitude: -11.8074901,
                 userLongitude: -42.0650823
             }),
-        ).rejects.toBeInstanceOf(Error)
+        ).rejects.toBeInstanceOf(MaxNumberOfCheckInsError)
     })
 
     it('deverá ser possível realizar checkIns em diferentes dias', async () => {
@@ -101,6 +103,6 @@ describe('Check In service', () => {
                 userLatitude: -11.8103557,
                 userLongitude: -42.0615918
             }),
-        ).rejects.toBeInstanceOf(Error)
+        ).rejects.toBeInstanceOf(MaxDistanceError)
     })
 })
