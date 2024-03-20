@@ -31,9 +31,9 @@ describe('Check In service', () => {
         vi.useRealTimers()
     })
 
-    it('should be able to check in', async () => {
+    it('deverá ser possível realizar o checkIn', async () => {
         const { checkIn } = await service.createCheckIn({
-            gymId: 'gym-1',
+            gymId: 'gym-01',
             userId: 'user-1',
             userLatitude: -11.8074901,
             userLongitude: -42.0650823
@@ -41,7 +41,7 @@ describe('Check In service', () => {
         expect(checkIn.id).toEqual(expect.any(String))
     })
 
-    it('should not be able to check in twice in the same day', async () => {
+    it('não deverá ser possível fazer dois checkIns no mesmo dia', async () => {
         vi.setSystemTime(new Date(2022, 0, 20, 8, 0, 0))
     
         await service.createCheckIn({
@@ -61,7 +61,7 @@ describe('Check In service', () => {
         ).rejects.toBeInstanceOf(Error)
       })
     
-      it('should be able to check in twice but in different days', async () => {
+      it('deverá ser possível realizar checkIns em diferentes dias', async () => {
         vi.setSystemTime(new Date(2022, 0, 20, 8, 0, 0))
     
         await service.createCheckIn({
@@ -83,7 +83,7 @@ describe('Check In service', () => {
         expect(checkIn.id).toEqual(expect.any(String))
       })
 
-      it('should not be able to check in on distant gym', async () => {
+      it('não deverá ser possível realizar o checkIn por conta da distância do usuário em relação a academia', async () => {
         gymsRepository.items.push({
           id: 'gym-02',
           title: 'JavaScript Gym',
@@ -102,6 +102,4 @@ describe('Check In service', () => {
           }),
         ).rejects.toBeInstanceOf(Error)
       })
-
-
 })

@@ -67,7 +67,7 @@ describe('Get user use case', () => {
         service = new UserService(usersRepository)
     })
 
-    it('should be able to get user profile', async () => {
+    it('deverá ser possível criar o usuário', async () => {
         const userCreated = await service.registerUser({
             name: 'Vitest Vite',
             email: 'vitest@vite.com',
@@ -80,7 +80,7 @@ describe('Get user use case', () => {
 
     })
 
-    it("should not be able to get user profile with wrong id", async () => {
+    it("não deverá ser possível obter o usuário", async () => {
         expect( async () => {
             await service.getUserById("falseId")
         }).rejects.toBeInstanceOf(ResourceNotFoundError)
