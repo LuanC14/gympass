@@ -10,7 +10,7 @@ let repository: InMemoryCheckInsRepository
 let gymsRepository: InMemoryGymsRepository
 let service: CheckInService
 
-describe('CheckInService: Create Check-in use case', () => {
+describe('CheckInService: Create check-in use case', () => {
 
     beforeEach(async () => {
         repository = new InMemoryCheckInsRepository()
@@ -107,7 +107,7 @@ describe('CheckInService: Create Check-in use case', () => {
     })
 })
 
-describe('CheckInService: Fetch Check-in use case', () => {
+describe('CheckInService: Fetch check-in use case', () => {
     beforeEach(async () => {
         repository = new InMemoryCheckInsRepository()
         service = new CheckInService(repository)
@@ -125,7 +125,7 @@ describe('CheckInService: Fetch Check-in use case', () => {
             user_id: 'user-01'
         })
 
-        const { checkIns } = await service.FecthUserCheckIns({
+        const { checkIns } = await service.fecthUserCheckIns({
             userId: 'user-01',
             page: 1
         })
@@ -133,21 +133,21 @@ describe('CheckInService: Fetch Check-in use case', () => {
         expect(checkIns).toHaveLength(2)
 
         expect(checkIns).toEqual([
-            expect.objectContaining({gym_id: 'gym-01'}),
-            expect.objectContaining({gym_id: 'gym-02'})
+            expect.objectContaining({ gym_id: 'gym-01' }),
+            expect.objectContaining({ gym_id: 'gym-02' })
         ])
     })
 
     it('Deverá ser possível obter uma lista paginada de check-ins', async () => {
 
-        for(let i = 1; i <= 22; i++) {
+        for (let i = 1; i <= 22; i++) {
             await repository.create({
                 gym_id: `gym-${i}`,
                 user_id: 'user-01'
             })
         }
 
-        const { checkIns } = await service.FecthUserCheckIns({
+        const { checkIns } = await service.fecthUserCheckIns({
             userId: 'user-01',
             page: 2
         })
@@ -155,8 +155,31 @@ describe('CheckInService: Fetch Check-in use case', () => {
         expect(checkIns).toHaveLength(2)
 
         expect(checkIns).toEqual([
-            expect.objectContaining({gym_id: 'gym-21'}),
-            expect.objectContaining({gym_id: 'gym-22'})
+            expect.objectContaining({ gym_id: 'gym-21' }),
+            expect.objectContaining({ gym_id: 'gym-22' })
         ])
+    })
+})
+
+describe('CheckInService: Get User check-in metrics use case', () => {
+    beforeEach(async () => {
+        repository = new InMemoryCheckInsRepository()
+        service = new CheckInService(repository)
+    })
+
+    it('deverá ser possível obter a quantidade de check-ins', async () => {
+        await repository.create({
+            gym_id: 'gym-01',
+            user_id: 'user-01'
+        })
+
+        await repository.create({
+            gym_id: 'gym-02',
+            user_id: 'user-01'
+        })
+
+        const { checkInsCount } = await service.getUserMetrics({ userId: 'user-01' })
+
+        expect(checkInsCount).toEqual(2)
     })
 })

@@ -26,6 +26,14 @@ interface FetchUserCheckInsResponse {
     checkIns: CheckIn[]
 }
 
+interface GetUserMetricsRequest {
+    userId: string
+}
+
+interface GetUserMetricsResponse {
+    checkInsCount: number
+}
+
 export class CheckInService {
     constructor(
         private checkInsRepository: ICheckInsRepository,
@@ -58,11 +66,16 @@ export class CheckInService {
         return { checkIn }
     }
 
-    async FecthUserCheckIns({ userId, page }: FetchUserCheckInsRequest): Promise<FetchUserCheckInsResponse> {
+    async fecthUserCheckIns({ userId, page }: FetchUserCheckInsRequest): Promise<FetchUserCheckInsResponse> {
         const checkIns = await this.checkInsRepository.findManyByUserId(userId, page)
 
         return {
             checkIns,
         }
+    }
+
+    async getUserMetrics({ userId }: GetUserMetricsRequest): Promise<GetUserMetricsResponse> {
+        const checkInsCount = await this.checkInsRepository.countByUserId(userId)
+        return { checkInsCount }
     }
 }

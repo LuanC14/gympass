@@ -42,12 +42,16 @@ export class InMemoryCheckInsRepository implements ICheckInsRepository {
 
     async findManyByUserId(userId: string, page: number): Promise<CheckIn[]> {
         return this.items
-        .filter(item => item.user_id === userId)
-        .slice((page - 1) * 20, page * 20) 
+            .filter(item => item.user_id === userId)
+            .slice((page - 1) * 20, page * 20)
         /*
             slice(0,20) = retorna do índice 0 até o 20°
             então, slice((page - 1) * 20, page * 20), quando receber a página 1, será a mesma coisa que a expressão slice(0,20)  
             para página 2, será slice(20, 40)
         */
+    }
+
+    async countByUserId(userId: string): Promise<number> {
+        return this.items.filter((checkIn) => checkIn.user_id === userId).length
     }
 }
