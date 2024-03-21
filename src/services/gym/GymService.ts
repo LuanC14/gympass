@@ -22,6 +22,14 @@ interface SearchGymResponse {
   gyms: Gym[]
 }
 
+interface FetchNearbyGymsRequest {
+  userLatitude: number
+  userLongitude: number
+}
+
+interface FetchNearbyGymsResponse {
+  gyms: Gym[]
+}
 
 export class GymService {
 
@@ -42,5 +50,12 @@ export class GymService {
   async searchGymsByTitle({ query, page }: SearchGymRequest): Promise<SearchGymResponse> {
     const gyms = await this.gymsRepository.searchMany(query, page)
     return { gyms }
+  }
+
+  async fetchNearbyGyms({ userLatitude, userLongitude }: FetchNearbyGymsRequest): Promise<FetchNearbyGymsResponse> {
+    const gyms = await this.gymsRepository.findManyNearby(userLatitude, userLongitude)
+    return {
+      gyms,
+    }
   }
 }

@@ -1,6 +1,7 @@
 import { describe, expect, it, beforeEach } from "vitest";
 import { InMemoryGymsRepository } from "../../repositories/inMemory/InMemoryGymsRepository";
 import { GymService } from "./GymService";
+import { title } from "process";
 
 let gymsRepository: InMemoryGymsRepository
 let service: GymService
@@ -33,29 +34,29 @@ describe('GymService: Search gym use case', async () => {
 
     it('should be able to search for gyms', async () => {
         await gymsRepository.create({
-          title: 'JavaScript Gym',
-          description: null,
-          phone: null,
-          latitude: -27.2092052,
-          longitude: -49.6401091,
+            title: 'JavaScript Gym',
+            description: null,
+            phone: null,
+            latitude: -27.2092052,
+            longitude: -49.6401091,
         })
-    
+
         await gymsRepository.create({
-          title: 'TypeScript Gym',
-          description: null,
-          phone: null,
-          latitude: -27.2092052,
-          longitude: -49.6401091,
+            title: 'TypeScript Gym',
+            description: null,
+            phone: null,
+            latitude: -27.2092052,
+            longitude: -49.6401091,
         })
-    
+
         const { gyms } = await service.searchGymsByTitle({
-          query: 'JavaScript',
-          page: 1,
+            query: 'JavaScript',
+            page: 1,
         })
-    
+
         expect(gyms).toHaveLength(1)
         expect(gyms).toEqual([expect.objectContaining({ title: 'JavaScript Gym' })])
-      })
+    })
 
     it('deverá ser possível fazer uma busca paginada das academias', async () => {
         for (let i = 1; i <= 22; i++) {
@@ -79,4 +80,35 @@ describe('GymService: Search gym use case', async () => {
             expect.objectContaining({ title: 'JavaScript Gym 22' }),
         ])
     })
+})
+
+describe('GymService: Fetch nearby gyms use case', async () => {
+    beforeEach(async () => {
+        gymsRepository = new InMemoryGymsRepository()
+        service = new GymService(gymsRepository)
+    })
+
+    it('Deve ser possível obter academias próximas', async () => {
+        await gymsRepository.create({
+            title: 'Nearby Gym',
+            description: null,
+            phone: null,
+            latitude: -11.8074901,
+            longitude: -42.0650823,
+        })
+
+        await gymsRepository.create({
+            title: 'Far Gym',
+            description: null,
+            phone: null,
+            latitude: -11.6449072,
+            longitude: -42.0155043,
+        })
+
+        const { gyms } = await service.fetchNearbyGyms({ userLatitude: -11.8087419, userLongitude: -42.062609 })
+
+        expect(gyms).toHaveLength(1)
+        expect(gyms).toEqual([expect.objectContaining({ title: 'Nearby Gym' })])
+    })
+
 })
