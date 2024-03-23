@@ -5,6 +5,8 @@ import { ResourceNotFoundError } from "../../errors/ResourceNotFoundError"
 import { getDistanceBetweenCoordinates } from "../../utils/getDistanceBetweenCoordinates"
 import { MaxDistanceError } from "../../errors/MaxDistanceError"
 import { MaxNumberOfCheckInsError } from "../../errors/MaxNumberOfCheckInsError"
+import dayjs from "dayjs"
+import { LateCheckInValidationError } from "../../errors/LateCheckInValidationError"
 
 interface CheckInRequest {
     userId: string
@@ -33,6 +35,14 @@ interface GetUserMetricsRequest {
 interface GetUserMetricsResponse {
     checkInsCount: number
 }
+
+interface ValidateCheckInRequest {
+    checkInId: string
+  }
+  
+  interface ValidateCheckInResponse {
+    checkIn: CheckIn
+  }
 
 export class CheckInService {
     constructor(
@@ -78,4 +88,30 @@ export class CheckInService {
         const checkInsCount = await this.checkInsRepository.countByUserId(userId)
         return { checkInsCount }
     }
+
+    // Quando o serviço gera um check-in, ele tem até 20 minutos para validar em uma academia
+    async validateCheckIn({checkInId}: ValidateCheckInRequest): Promise<ValidateCheckInResponse> {
+        const checkIn = await this.checkInsRepository.findById(checkInId)
+    
+        if (!checkIn) {
+          throw new ResourceNotFoundError()
+        }
+
+        const distanceInMinutesFromCheckInCreation = dayjs(new Date()).diff(
+            checkIn.created_at,
+            'minutes'
+        )
+
+        if(distanceInMinutesFromCheckInCreation > 20) throw new LateCheckInValidationError()
+    
+        checkIn.validated_at = new Date()
+    
+        await this.checkInsRepository.save(checkIn)
+    
+        return {
+          checkIn,
+        }
+      }
+
+
 }

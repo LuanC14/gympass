@@ -5,6 +5,8 @@ import { InMemoryGymsRepository } from "../../repositories/inMemory/InMemoryGyms
 import { Decimal } from "@prisma/client/runtime/library"
 import { MaxDistanceError } from "../../errors/MaxDistanceError"
 import { MaxNumberOfCheckInsError } from "../../errors/MaxNumberOfCheckInsError"
+import { ResourceNotFoundError } from "../../errors/ResourceNotFoundError"
+import { LateCheckInValidationError } from "../../errors/LateCheckInValidationError"
 
 let repository: InMemoryCheckInsRepository
 let gymsRepository: InMemoryGymsRepository
@@ -27,7 +29,6 @@ describe('CheckInService: Create check-in use case', () => {
             latitude: -11.8074901,
             longitude: -42.0650823
         })
-
     })
 
     afterEach(() => {
@@ -181,5 +182,58 @@ describe('CheckInService: Get User check-in metrics use case', () => {
         const { checkInsCount } = await service.getUserMetrics({ userId: 'user-01' })
 
         expect(checkInsCount).toEqual(2)
+    })
+})
+
+describe('Validate Check-in Use Case', () => {
+    beforeEach(async () => {
+        repository = new InMemoryCheckInsRepository()
+        service = new CheckInService(repository)
+        vi.useFakeTimers()
+    })
+
+    afterEach(() => {
+        vi.useRealTimers()
+    })
+
+    it('should be able to validate the check-in', async () => {
+        const createdCheckIn = await repository.create({
+            gym_id: 'gym-01',
+            user_id: 'user-01',
+        })
+
+        const { checkIn } = await service.validateCheckIn({
+            checkInId: createdCheckIn.id,
+        })
+
+        expect(checkIn.validated_at).toEqual(expect.any(Date))
+        expect(repository.items[0].validated_at).toEqual(expect.any(Date))
+    })
+
+    it('should not be able to validate an inexistent check-in', async () => {
+        await expect(() =>
+            service.validateCheckIn({
+                checkInId: 'inexistent-check-in-id',
+            }),
+        ).rejects.toBeInstanceOf(ResourceNotFoundError)
+    })
+
+    it('Não deverá ser possível validar o check-in após 20 minutos da sua criação', async () => {
+        vi.setSystemTime(new Date(2024, 0, 1, 19, 30))
+
+        const createdCheckIn = await repository.create({
+            gym_id: 'gym-01',
+            user_id: 'user-01',
+        })
+
+        const twentyOneMinutesInMilliseconds = 1000 * 60 * 21
+
+        vi.advanceTimersByTime(twentyOneMinutesInMilliseconds)
+
+        await expect(service.validateCheckIn({
+            checkInId: createdCheckIn.id
+        })).rejects.toBeInstanceOf(LateCheckInValidationError)
+
+
     })
 })
