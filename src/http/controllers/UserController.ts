@@ -2,8 +2,15 @@ import { z } from "zod"
 import { FastifyRequest, FastifyReply } from 'fastify'
 import { UserAlreadyExistsError } from "../../errors/UserAlreadyExistsError"
 import { makeUserService } from "../../utils/factories/makeUserService"
+import { UserService } from "../../services/user/UserService"
 
 export class UserController {
+
+    private service!: UserService;
+
+     async build() {
+        this.service = makeUserService()
+    }
 
     public async register(req: FastifyRequest, res: FastifyReply) {
 
@@ -16,8 +23,7 @@ export class UserController {
         const { name, email, password } = registerBodySchema.parse(req.body)
 
         try {
-            const service = makeUserService()
-            await service.registerUser({ name, email, password })
+            await this.service.registerUser({ name, email, password })
 
         } catch (error: any) {
             if (error instanceof UserAlreadyExistsError) return res.status(409).send({ message: error.message })
@@ -28,9 +34,7 @@ export class UserController {
     }
 
     public async getUser(req: FastifyRequest, res: FastifyReply) {
-        const service = makeUserService()
-
-        const { user } = await service.getUserById({ userId: req.user.sub })
+        const { user } = await this.service.getUserById({ userId: req.user.sub })
 
         return res.status(200).send({
             ...user,
