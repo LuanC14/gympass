@@ -38,7 +38,7 @@ export class UserService {
         }
     }
 
-    async getUserById(userId: string): Promise<GetUserResponse> {
+    async getUserById({ userId }: { userId: string }): Promise<GetUserResponse> {
         const user = await this.usersRepository.findById(userId)
 
         if (!user) {
@@ -46,6 +46,6 @@ export class UserService {
         }
         return { user }
     }
-    
+
 }
 
