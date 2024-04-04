@@ -5,12 +5,6 @@ import { makeUserService } from "../../utils/factories/makeUserService"
 
 export class UserController {
 
-    private service
-
-    constructor() {
-        this.service = makeUserService()
-    }
-
      public async register(req: FastifyRequest, res: FastifyReply) {
 
         const registerBodySchema = z.object({
@@ -22,7 +16,8 @@ export class UserController {
         const { name, email, password } = registerBodySchema.parse(req.body)
     
         try {
-            await this.service.registerUser({ name, email, password })
+            const service = makeUserService()
+            await service.registerUser({ name, email, password })
 
         } catch (error: any) {
             if (error instanceof UserAlreadyExistsError) return res.status(409).send({ message: error.message })
@@ -31,5 +26,7 @@ export class UserController {
     
         return res.status(201).send()
     }
+
+
 }
 
