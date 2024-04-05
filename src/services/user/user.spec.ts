@@ -74,7 +74,7 @@ describe('Get user use case', () => {
             password: '123456'
         })
 
-        const { user } = await service.getUserById(userCreated.user.id)
+        const { user } = await service.getUserById({userId: userCreated.user.id})
 
         expect(user.id).toEqual(expect.any(String))
 
@@ -82,7 +82,7 @@ describe('Get user use case', () => {
 
     it("não deverá ser possível obter o usuário", async () => {
         expect( async () => {
-            await service.getUserById("falseId")
+            await service.getUserById({userId: "falseId"})
         }).rejects.toBeInstanceOf(ResourceNotFoundError)
     })
 })
