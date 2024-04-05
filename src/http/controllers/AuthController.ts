@@ -2,7 +2,6 @@ import { FastifyReply, FastifyRequest } from "fastify";
 import { z } from 'zod'
 import { makeAuthService } from "../../utils/factories/makeAuthService";
 import { InvalidCredentialsError } from "../../errors/InvalidCredentialsErrors";
-import { PrismaUsersRepository } from "../../repositories/Prisma/PrismaUsersRepository";
 import { AuthService } from "../../services/auth/AuthService";
 
 export class AuthController {
