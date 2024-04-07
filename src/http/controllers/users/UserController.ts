@@ -1,8 +1,8 @@
 import { z } from "zod"
 import { FastifyRequest, FastifyReply } from 'fastify'
-import { UserAlreadyExistsError } from "../../errors/UserAlreadyExistsError"
-import { makeUserService } from "../../utils/factories/makeUserService"
-import { UserService } from "../../services/user/UserService"
+import { UserAlreadyExistsError } from "../../../errors/UserAlreadyExistsError"
+import { makeUserService } from "../../../utils/factories/makeUserService"
+import { UserService } from "../../../services/user/UserService"
 
 export class UserController {
 

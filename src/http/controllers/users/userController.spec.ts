@@ -1,6 +1,6 @@
 import request from 'supertest'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
-import { app } from '../../app'
+import { app } from '../../../app'
 
 describe('UserController (e2e)', () => {
     beforeAll(async () => {
@@ -35,15 +35,12 @@ describe('UserController (e2e)', () => {
   
       const { token } = authResponse.body
 
-      console.log(token)
   
       const profileResponse = await request(app.server)
         .get('/users/me')
         .set('Authorization', `Bearer ${token}`)
         .send()
 
-        console.log(profileResponse.body)
-  
       expect(profileResponse.statusCode).toEqual(200)
       expect(profileResponse.body).toEqual(
         expect.objectContaining({

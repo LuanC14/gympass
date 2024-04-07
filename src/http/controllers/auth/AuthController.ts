@@ -1,8 +1,8 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import { z } from 'zod'
-import { makeAuthService } from "../../utils/factories/makeAuthService";
-import { InvalidCredentialsError } from "../../errors/InvalidCredentialsErrors";
-import { AuthService } from "../../services/auth/AuthService";
+import { makeAuthService } from "../../../utils/factories/makeAuthService";
+import { InvalidCredentialsError } from "../../../errors/InvalidCredentialsErrors";
+import { AuthService } from "../../../services/auth/AuthService";
 
 export class AuthController {
 
