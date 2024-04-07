@@ -6,5 +6,5 @@ const userController = new UserController()
 
 export  function userRoutes(app: FastifyInstance) {
     app.post("/users", {onRequest: [userController.build]}, userController.register)
-    app.get("/users", {onRequest: [userController.build, verifyJwt]} ,userController.getUser)
+    app.get("/users/me", {onRequest: [userController.build, verifyJwt]} ,userController.getUser)
 }
