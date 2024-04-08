@@ -27,7 +27,7 @@ export class GymController {
         const { title, description, phone, latitude, longitude } =
             createGymBodySchema.parse(req.body)
 
-        await this.service.createGym({
+        const g = await this.service.createGym({
             title,
             description,
             phone,
@@ -35,40 +35,41 @@ export class GymController {
             longitude,
         })
 
-        return res.status(201).send()
+        return res.status(201).send(g)
     }
 
-     async search(req: FastifyRequest, res: FastifyReply) {
+    async search(req: FastifyRequest, res: FastifyReply) {
 
         const searchGymsQuerySchema = z.object({
-          q: z.string(),
-          page: z.coerce.number().min(1).default(1),
+            q: z.coerce.string(),
+            page: z.coerce.number().min(1).default(1),
         })
 
         const { q, page } = searchGymsQuerySchema.parse(req.query)
-      
+
+
         const { gyms } = await this.service.searchGymsByTitle({
-          query: q,
-          page,
+            query: q,
+            page,
         })
-      
+
+
         return res.status(200).send({
-          gyms,
+            gyms,
         })
-      }
+    }
 
     async nearby(req: FastifyRequest, res: FastifyReply) {
         const nearbyGymsQuerySchema = z.object({
-            latitude: z.number().refine((value) => {
+            latitude: z.coerce.number().refine((value) => {
                 return Math.abs(value) <= 90
             }),
-            longitude: z.number().refine((value) => {
+            longitude: z.coerce.number().refine((value) => {
                 return Math.abs(value) <= 180
             }),
         })
 
         const { latitude, longitude } = nearbyGymsQuerySchema.parse(req.query)
-
 
         const { gyms } = await this.service.fetchNearbyGyms({
             userLatitude: latitude,

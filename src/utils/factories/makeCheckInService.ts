@@ -1,5 +1,5 @@
 import { InMemoryGymsRepository } from '../../repositories/inMemory/InMemoryGymsRepository'
-import { PrismaGymsRepository } from '../../repositories/Prisma/PrimsaGymsRepository'
+import { PrismaGymsRepository } from '../../repositories/Prisma/PrismaGymsRepository'
 import { PrismaCheckInsRepository } from '../../repositories/Prisma/PrismaCheckInsRepository'
 import { CheckInService } from '../../services/checkIn/CheckInService'
 
