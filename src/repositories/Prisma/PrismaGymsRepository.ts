@@ -21,7 +21,6 @@ export class PrismaGymsRepository implements IGymsRepository {
         });
     }
     async findManyNearby(latitude: number, longitude: number): Promise<Gym[]> {
-        console.log(latitude, longitude)
         const gyms = await prisma.$queryRaw<Gym[]>`
        SELECT 
             * 

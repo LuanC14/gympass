@@ -65,6 +65,17 @@ describe("GymController:e2e", () => {
                 longitude: -49.7401091,
             })
 
+            await request(app.server)
+            .post('/gyms')
+            .set('Authorization', `Bearer ${token}`)
+            .send({
+                title: 'CSS Gym',
+                description: 'Some description.',
+                phone: '1199999999',
+                latitude: -33.3092052,
+                longitude: -49.7401091,
+            })
+
 
         const response = await request(app.server)
             .get('/gyms/nearby')
@@ -74,8 +85,6 @@ describe("GymController:e2e", () => {
             })
             .set('Authorization', `Bearer ${token}`)
             .send()
-
-        console.log(response.body)
 
         expect(response.statusCode).toEqual(200)
         expect(response.body.gyms).toHaveLength(1)
