@@ -45,7 +45,7 @@ export class GymController {
           page: z.coerce.number().min(1).default(1),
         })
 
-        const { q, page } = searchGymsQuerySchema.parse(req.body)
+        const { q, page } = searchGymsQuerySchema.parse(req.query)
       
         const { gyms } = await this.service.searchGymsByTitle({
           query: q,
@@ -67,7 +67,7 @@ export class GymController {
             }),
         })
 
-        const { latitude, longitude } = nearbyGymsQuerySchema.parse(req.body)
+        const { latitude, longitude } = nearbyGymsQuerySchema.parse(req.query)
 
 
         const { gyms } = await this.service.fetchNearbyGyms({
