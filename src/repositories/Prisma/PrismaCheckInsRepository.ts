@@ -16,8 +16,15 @@ export class PrismaCheckInsRepository implements ICheckInsRepository {
         })
     }
     async findById(id: string): Promise<CheckIn | null> {
-        throw new Error("Method not implemented.");
-    }
+        const checkIn = await prisma.checkIn.findUnique({
+          where: {
+            id,
+          },
+        })
+    
+        return checkIn
+      }
+    
     async findByUserIdOnDate(userId: string, date: Date): Promise<CheckIn | null> {
         const startOfTheDay = dayjs(date).startOf('date')
         const endOfTheDay = dayjs(date).endOf('date')
@@ -33,15 +40,18 @@ export class PrismaCheckInsRepository implements ICheckInsRepository {
         })
 
     }
-    async findManyByUserId(userId: string, page: number): Promise<CheckIn[]> {
-        return await prisma.checkIn.findMany({
-            where: {
-                user_id: userId
-            },
-            take: 20,
-            skip: (page - 1 * 20)
+    async findManyByUserId(userId: string, page: number) {
+        console.log("many", userId, page)
+        const checkIns = await prisma.checkIn.findMany({
+          where: {
+            user_id: userId,
+          },
+          skip: (page - 1) * 20,
+          take: 20,
         })
-    }
+    
+        return checkIns
+      }
 
     async countByUserId(userId: string): Promise<number> {
         return await prisma.checkIn.count({ where: { user_id: userId } })

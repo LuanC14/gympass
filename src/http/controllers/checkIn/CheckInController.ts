@@ -46,8 +46,7 @@ export class CheckInController {
         })
 
         const { page } = checkInHistoryQuerySchema.parse(req.query)
-
-
+        console.log(req.user.sub)
         const { checkIns } = await this.service.fecthUserCheckIns({
             page,
             userId: req.user.sub,
@@ -75,7 +74,6 @@ export class CheckInController {
         })
       
         const { checkInId } = validateCheckInParamsSchema.parse(req.params)
-      
       
         await this.service.validateCheckIn({
           checkInId,
