@@ -13,7 +13,7 @@ describe('GymController:e2e: Search nearby gym use case', () => {
     })
 
    it('should be able list nearby gyms', async () => {
-        const {token} = await createAndAuthenticateUser(app)
+        const {token} = await createAndAuthenticateUser(app, true)
 
         await request(app.server)
             .post('/gyms')
