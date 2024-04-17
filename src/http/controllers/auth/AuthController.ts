@@ -25,15 +25,15 @@ export class AuthController {
         try {
             const { user } = await this.service.authUser({ email, password })
 
-            const token = await res.jwtSign({},
+            const token = await res.jwtSign({ role: user.role },
                 {
                     sign: {
-                        sub: user.id,
+                        sub: user.id
                     },
                 },
             )
 
-            const refreshToken = await res.jwtSign({},
+            const refreshToken = await res.jwtSign({ role: user.role },
                 {
                     sign: {
                         sub: user.id,
@@ -61,9 +61,10 @@ export class AuthController {
 
     public async refresh(req: FastifyRequest, res: FastifyReply) {
         await req.jwtVerify({ onlyCookie: true }) // verifica se há autenticação somente nos cookies, ao invés do Header da requisição.
-        console.log(req.user.sub)
-        
-        const token = await res.jwtSign({},
+
+        const { role } = req.user
+
+        const token = await res.jwtSign({ role },
             {
                 sign: {
                     sub: req.user.sub
@@ -71,7 +72,7 @@ export class AuthController {
             }
         )
 
-        const refreshToken = await res.jwtSign({},
+        const refreshToken = await res.jwtSign({ role },
             {
                 sign: {
                     sub: req.user.sub,
