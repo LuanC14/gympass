@@ -1,0 +1,21 @@
+name: Run Unit Tests # Define o nome do Workflow
+
+on: [push] # Define quando o workflow será acionado, no caso, ao realizar pushs no repo
+
+
+jobs: # Jobs define as Actions
+  run-unit-tests: # Nome da Action
+    name: Run Unit Tests # Nome da Action
+    runs-on: ubuntu-latest # Ambiente de execução da Action
+    
+    steps: # Define as etapas do processo (Essa do Node está disponível no Actions Marketplace)
+      - uses: actions/checkout@v3 # Instala o código do repositório na máquina Ubuntu
+
+      - uses: actions/setup-node@v3 # Instala o Node
+        with:
+          node-version: 18
+          cache: 'npm'
+
+      - run: npm ci # Instala as dependencais de maneira segura
+
+      - run: npm run test # Comando definido no package.json para executar os testes unitários
