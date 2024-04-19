@@ -1,4 +1,4 @@
-import fastify from 'fastify'
+import fastify, { FastifyInstance } from 'fastify'
 import fastifyCookie from '@fastify/cookie'
 import { ZodError } from 'zod'
 import { env } from './env'
@@ -15,14 +15,18 @@ app.register(fastifyJwt, {
     cookie: {
         cookieName: "refreshToken",
         signed: false // Sem hash 
-    } ,
+    },
     sign: {
         expiresIn: "10m"
     }
 })
 
-app.register(fastifyCookie)
+app.register(import('@fastify/swagger'));
+app.register(import('@fastify/swagger-ui'), {
+    routePrefix: '/documentation'
+});
 
+app.register(fastifyCookie)
 app.register(userRoutes)
 app.register(authRoutes)
 app.register(gymRoutes)
@@ -33,11 +37,11 @@ app.setErrorHandler((error, req, res) => {
         return res.status(400).send({ message: 'Validation error', issues: error.format() })
     }
 
-    if(env.NODE_ENV != 'production') {
+    if (env.NODE_ENV != 'production') {
         console.error(error)
     } else {
         // Log to external tools
     }
 
-    return res.status(500).send({message: 'Internal Server Error.'})
+    return res.status(500).send({ message: 'Internal Server Error.' })
 })
